@@ -4,10 +4,14 @@ import { Button } from "@/components/ui/button";
 import { HistoryChart } from "@/components/domain/HistoryChart";
 import { RecentHistory } from "@/components/domain/RecentHistory";
 import { PredictionForm } from "@/components/domain/PredictionForm";
-import { Activity, Users, AlertTriangle, Calendar, PlusCircle } from "lucide-react";
+import { Activity, Users, AlertTriangle, Calendar as CalendarIcon, PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface DashboardStats {
     total: number;
@@ -19,6 +23,7 @@ export function Dashboard() {
     const [open, setOpen] = useState(false);
     const [stats, setStats] = useState<DashboardStats | null>(null);
     const [loading, setLoading] = useState(true);
+    const [date, setDate] = useState<Date | undefined>(new Date());
 
     useEffect(() => {
         async function fetchStats() {
@@ -59,10 +64,28 @@ export function Dashboard() {
                     <p className="text-muted-foreground mt-1">Overview of your heart health status and history.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white px-3 py-1 rounded-md border shadow-sm">
-                        <Calendar className="h-4 w-4" />
-                        <span>Today: {new Date().toLocaleDateString()}</span>
-                    </div>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant={"outline"}
+                                className={cn(
+                                    "justify-start text-left font-normal",
+                                    !date && "text-muted-foreground"
+                                )}
+                            >
+                                <CalendarIcon className="mr-2 h-4 w-4" />
+                                {date ? format(date, "PPP") : <span>Pick a date</span>}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0">
+                            <Calendar
+                                mode="single"
+                                selected={date}
+                                onSelect={setDate}
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
 
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>

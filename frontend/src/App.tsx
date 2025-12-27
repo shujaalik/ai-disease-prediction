@@ -6,6 +6,8 @@ import { Landing } from "@/pages/Landing";
 import { Login } from "@/pages/Login";
 import { Register } from "@/pages/Register";
 import { Dashboard } from "@/pages/Dashboard";
+import { History } from "@/pages/History";
+import { Settings } from "@/pages/Settings";
 
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 
@@ -22,8 +24,8 @@ function App() {
         {/* Protected Routes */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/history" element={<div className="p-8">History Page (Coming Soon)</div>} />
-          <Route path="/settings" element={<div className="p-8">Settings Page (Coming Soon)</div>} />
+          <Route path="/history" element={<History />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
       <Toaster />

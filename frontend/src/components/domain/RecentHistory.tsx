@@ -10,17 +10,30 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
+import { AssessmentDetails } from "./AssessmentDetails";
 
 interface Assessment {
     id: string;
     created_at: string;
     prediction: number;
     probability: number;
+    age?: number;
+    sex?: number;
+    cp?: number;
+    trestbps?: number;
+    chol?: number;
+    fbs?: number;
+    restecg?: number;
+    thalach?: number;
+    exang?: number;
+    oldpeak?: number;
 }
 
 export function RecentHistory() {
     const [history, setHistory] = useState<Assessment[]>([]);
     const [loading, setLoading] = useState(true);
+    const [selectedAssessment, setSelectedAssessment] = useState<Assessment | null>(null);
+    const [detailsOpen, setDetailsOpen] = useState(false);
 
     useEffect(() => {
         async function fetchHistory() {
@@ -38,6 +51,11 @@ export function RecentHistory() {
 
         fetchHistory();
     }, []);
+
+    const handleViewDetails = (assessment: Assessment) => {
+        setSelectedAssessment(assessment);
+        setDetailsOpen(true);
+    };
 
     if (loading) {
         return <div className="flex justify-center p-4"><Loader2 className="animate-spin h-6 w-6 text-emerald-600" /></div>;
@@ -76,7 +94,10 @@ export function RecentHistory() {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>{(item.probability * 100).toFixed(1)}%</TableCell>
-                                <TableCell className="text-right text-emerald-600 cursor-pointer hover:underline">
+                                <TableCell
+                                    className="text-right text-emerald-600 cursor-pointer hover:underline"
+                                    onClick={() => handleViewDetails(item)}
+                                >
                                     View Details
                                 </TableCell>
                             </TableRow>
@@ -84,6 +105,12 @@ export function RecentHistory() {
                     )}
                 </TableBody>
             </Table>
+
+            <AssessmentDetails
+                open={detailsOpen}
+                onOpenChange={setDetailsOpen}
+                assessment={selectedAssessment}
+            />
         </div>
     )
 }

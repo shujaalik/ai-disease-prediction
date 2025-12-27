@@ -1,11 +1,13 @@
-import { Outlet, Link, useNavigate } from "react-router-dom";
+import { Outlet, Link, useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { HeartPulse, LayoutDashboard, History, Settings, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 export function DashboardLayout() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     async function handleLogout() {
         await supabase.auth.signOut();
@@ -23,15 +25,39 @@ export function DashboardLayout() {
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2">
-                    <Link to="/dashboard" className="flex items-center gap-3 px-4 py-3 bg-emerald-800/50 text-emerald-100 rounded-lg hover:bg-emerald-800 transition-colors">
+                    <Link
+                        to="/dashboard"
+                        className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                            location.pathname === "/dashboard"
+                                ? "bg-emerald-800 text-emerald-100"
+                                : "text-emerald-100/70 hover:bg-emerald-800/30 hover:text-emerald-50"
+                        )}
+                    >
                         <LayoutDashboard className="h-5 w-5" />
                         Dashboard
                     </Link>
-                    <Link to="/history" className="flex items-center gap-3 px-4 py-3 text-emerald-100/70 hover:bg-emerald-800/30 rounded-lg transition-colors hover:text-emerald-50">
+                    <Link
+                        to="/history"
+                        className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                            location.pathname === "/history"
+                                ? "bg-emerald-800 text-emerald-100"
+                                : "text-emerald-100/70 hover:bg-emerald-800/30 hover:text-emerald-50"
+                        )}
+                    >
                         <History className="h-5 w-5" />
                         History
                     </Link>
-                    <Link to="/settings" className="flex items-center gap-3 px-4 py-3 text-emerald-100/70 hover:bg-emerald-800/30 rounded-lg transition-colors hover:text-emerald-50">
+                    <Link
+                        to="/settings"
+                        className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+                            location.pathname === "/settings"
+                                ? "bg-emerald-800 text-emerald-100"
+                                : "text-emerald-100/70 hover:bg-emerald-800/30 hover:text-emerald-50"
+                        )}
+                    >
                         <Settings className="h-5 w-5" />
                         Settings
                     </Link>
