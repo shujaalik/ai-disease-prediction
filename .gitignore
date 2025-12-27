@@ -39,3 +39,6 @@ coverage/
 /ml-research/saved_models/*
 !/ml-research/datasets/.gitkeep
 !/ml-research/saved_models/.gitkeep
+
+# Exceptions
+!frontend/src/lib/

@@ -1,15 +1,22 @@
 .PHONY: backend frontend dev start install
 
-install:
+install: install-backend install-frontend
+
+install-backend:
 	@echo "Installing backend dependencies..."
 	cd backend && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt
+
+install-frontend:
+	@echo "Installing frontend dependencies..."
+	cd frontend && npm install
 
 backend:
 	@echo "Starting Backend..."
 	./backend/venv/bin/python backend/run.py
 
 frontend:
-	@echo "Frontend not implemented yet."
+	@echo "Starting Frontend..."
+	cd frontend && npm run dev
 
 dev:
 	@echo "Starting Development Mode..."
