@@ -72,7 +72,7 @@ export function Settings() {
                     </CardContent>
                 </Card>
 
-                {/* Notifications Section */}
+                {/* Notifications Section - Temporarily Disabled
                 <Card>
                     <CardHeader>
                         <div className="flex items-center gap-2">
@@ -103,6 +103,7 @@ export function Settings() {
                         </div>
                     </CardContent>
                 </Card>
+                */}
 
                 {/* Account Actions */}
                 <Card className="border-red-100">

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { HistoryChart } from "@/components/domain/HistoryChart";
 import { RecentHistory } from "@/components/domain/RecentHistory";
 import { PredictionForm } from "@/components/domain/PredictionForm";
-import { Activity, Users, AlertTriangle, Calendar as CalendarIcon, PlusCircle } from "lucide-react";
+import { Activity, Users, AlertTriangle, PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
 import { supabase } from "@/lib/supabase";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -64,28 +64,7 @@ export function Dashboard() {
                     <p className="text-muted-foreground mt-1">Overview of your heart health status and history.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <Popover>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant={"outline"}
-                                className={cn(
-                                    "justify-start text-left font-normal",
-                                    !date && "text-muted-foreground"
-                                )}
-                            >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date ? format(date, "PPP") : <span>Pick a date</span>}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0">
-                            <Calendar
-                                mode="single"
-                                selected={date}
-                                onSelect={setDate}
-                                initialFocus
-                            />
-                        </PopoverContent>
-                    </Popover>
+
 
                     <Dialog open={open} onOpenChange={setOpen}>
                         <DialogTrigger asChild>
