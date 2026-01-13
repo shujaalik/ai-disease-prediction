@@ -46,9 +46,69 @@ const formSchema = z.object({
     thal: z.string(),
 });
 
+interface Doctor {
+    id: string;
+    name: string;
+    speciality: string;
+    hospital: string;
+    location: string;
+    email: string;
+    phone: string;
+    image_url?: string;
+}
+
+const STATIC_DOCTORS: Doctor[] = [
+    {
+        id: '1',
+        name: 'Dr. Sarah Johnson',
+        speciality: 'Senior Cardiologist',
+        hospital: 'City Heart Institute',
+        location: 'New York, NY',
+        email: 'sarah.johnson@example.com',
+        phone: '+1-555-0101'
+    },
+    {
+        id: '2',
+        name: 'Dr. Michael Chen',
+        speciality: 'Interventional Cardiologist',
+        hospital: 'General Memorial Hospital',
+        location: 'San Francisco, CA',
+        email: 'michael.chen@example.com',
+        phone: '+1-555-0102'
+    },
+    {
+        id: '3',
+        name: 'Dr. Emily Williams',
+        speciality: 'Pediatric Cardiologist',
+        hospital: "Children's Hope Hospital",
+        location: 'Chicago, IL',
+        email: 'emily.williams@example.com',
+        phone: '+1-555-0103'
+    },
+    {
+        id: '4',
+        name: 'Dr. James Wilson',
+        speciality: 'Cardiothoracic Surgeon',
+        hospital: 'Advanced Care Center',
+        location: 'Houston, TX',
+        email: 'james.wilson@example.com',
+        phone: '+1-555-0104'
+    },
+    {
+        id: '5',
+        name: 'Dr. Anita Patel',
+        speciality: 'Cardiologist',
+        hospital: 'Wellness Heart Clinic',
+        location: 'London, UK',
+        email: 'anita.patel@example.com',
+        phone: '+44-20-7123-4567'
+    }
+];
+
 export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<any>(null);
+    const [doctors, setDoctors] = useState<Doctor[]>([]);
     const [open, setOpen] = useState(false);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
@@ -126,6 +186,14 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                 // Guest: Show Dialog
                 setResult(predictionResult);
                 setOpen(true);
+            }
+
+            // Fetch doctors if high risk
+            if (predictionResult.prediction === 1) {
+                // Use static data as requested
+                setDoctors(STATIC_DOCTORS);
+            } else {
+                setDoctors([]);
             }
         } catch (error) {
             console.error(error);
@@ -459,7 +527,53 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                 </div>
                             )}
                         </div>
-                        <div className="flex justify-end gap-2">
+
+                        {/* Doctor Recommendations */}
+                        {result && result.prediction === 1 && doctors.length > 0 && (
+                            <div className="border-t pt-4">
+                                <h4 className="font-semibold mb-3 text-slate-800">Recommended Cardiologists</h4>
+                                <div className="space-y-3 max-h-[300px] overflow-y-auto pr-1">
+                                    {doctors.map((doctor) => (
+                                        <div key={doctor.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-slate-50 rounded-lg border border-slate-100 gap-3">
+                                            <div>
+                                                <div className="font-medium text-slate-900">{doctor.name}</div>
+                                                <div className="text-xs text-slate-500">{doctor.speciality} • {doctor.hospital}</div>
+                                                <div className="text-xs text-slate-400">{doctor.location}</div>
+                                            </div>
+                                            <Button
+                                                size="sm"
+                                                variant="outline"
+                                                className="shrink-0"
+                                                onClick={() => {
+                                                    const subject = encodeURIComponent("Heart Disease Risk Assessment Report");
+                                                    const body = encodeURIComponent(`Dear ${doctor.name},
+
+I have completed an AI-based heart disease risk assessment and my result came back as High Risk with a probability of ${(result.probability * 100).toFixed(1)}%.
+
+Here are my clinical parameters:
+- Age: ${form.getValues().age}
+- Sex: ${parseInt(form.getValues().sex) === 1 ? 'Male' : 'Female'}
+- CP Type: ${form.getValues().cp}
+- Resting BP: ${form.getValues().trestbps}
+- Cholesterol: ${form.getValues().chol}
+- Max Heart Rate: ${form.getValues().thalach}
+
+I would like to schedule an appointment for a detailed checkup.
+
+Sincerely,
+(Your Name)`);
+                                                    window.open(`mailto:${doctor.email}?subject=${subject}&body=${body}`);
+                                                }}
+                                            >
+                                                Email Doctor
+                                            </Button>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex justify-end gap-2 pt-4 border-t mt-4">
                             {onSuccess ? (
                                 <Button onClick={handleClose}>Done</Button>
                             ) : isAuthenticated ? (
