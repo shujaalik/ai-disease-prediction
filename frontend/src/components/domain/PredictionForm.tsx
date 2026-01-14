@@ -31,19 +31,19 @@ import { predictHeartDisease } from "@/lib/api";
 import { supabase } from "@/lib/supabase";
 
 const formSchema = z.object({
-    age: z.coerce.number().min(1).max(120),
-    sex: z.string(),
-    cp: z.string(),
-    trestbps: z.coerce.number().min(50).max(250),
-    chol: z.coerce.number().min(100).max(600),
-    fbs: z.string(),
-    restecg: z.string(),
-    thalach: z.coerce.number().min(50).max(220),
-    exang: z.string(),
-    oldpeak: z.coerce.number().min(0).max(10),
-    slope: z.string(),
-    ca: z.coerce.number().min(0).max(3),
-    thal: z.string(),
+    age: z.string().min(1, "Age is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 1 && Number(val) <= 120, "Age must be 1-120"),
+    sex: z.string().min(1, "Please select sex"),
+    cp: z.string().min(1, "Please select chest pain type"),
+    trestbps: z.string().min(1, "Resting BP is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 50 && Number(val) <= 250, "Must be 50-250 mmHg"),
+    chol: z.string().min(1, "Cholesterol is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 100 && Number(val) <= 600, "Must be 100-600 mg/dl"),
+    fbs: z.string().min(1, "Please select fasting blood sugar status"),
+    restecg: z.string().min(1, "Please select resting ECG result"),
+    thalach: z.string().min(1, "Max heart rate is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 50 && Number(val) <= 220, "Must be 50-220 bpm"),
+    exang: z.string().min(1, "Please select exercise angina status"),
+    oldpeak: z.string().min(1, "ST Depression is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 10, "Must be 0-10"),
+    slope: z.string().min(1, "Please select slope"),
+    ca: z.string().min(1, "Major vessels count is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 0 && Number(val) <= 3, "Must be 0-3"),
+    thal: z.string().min(1, "Please select thalassemia status"),
 });
 
 interface Doctor {
@@ -122,19 +122,19 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            age: 50,
-            sex: "1",
-            cp: "0",
-            trestbps: 120,
-            chol: 200,
-            fbs: "0",
-            restecg: "0",
-            thalach: 150,
-            exang: "0",
-            oldpeak: 0,
-            slope: "1",
-            ca: 0,
-            thal: "2",
+            age: "",
+            sex: "",
+            cp: "",
+            trestbps: "",
+            chol: "",
+            fbs: "",
+            restecg: "",
+            thalach: "",
+            exang: "",
+            oldpeak: "",
+            slope: "",
+            ca: "",
+            thal: "",
         },
     });
 
@@ -144,12 +144,18 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
             // Convert string values to numbers for the API
             const payload = {
                 ...values,
+                age: parseInt(values.age),
                 sex: parseInt(values.sex),
                 cp: parseInt(values.cp),
+                trestbps: parseInt(values.trestbps),
+                chol: parseInt(values.chol),
                 fbs: parseInt(values.fbs),
                 restecg: parseInt(values.restecg),
+                thalach: parseInt(values.thalach),
                 exang: parseInt(values.exang),
+                oldpeak: parseFloat(values.oldpeak),
                 slope: parseInt(values.slope),
+                ca: parseInt(values.ca),
                 thal: parseInt(values.thal),
             };
 
@@ -242,7 +248,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>Age (Years)</FormLabel>
                                             <FormControl>
-                                                <Input type="number" {...field} />
+                                                <Input type="number" placeholder="e.g. 55" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -305,7 +311,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>Resting Blood Pressure (mm Hg)</FormLabel>
                                             <FormControl>
-                                                <Input type="number" {...field} />
+                                                <Input type="number" placeholder="e.g. 120" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -320,7 +326,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>Serum Cholesterol (mg/dl)</FormLabel>
                                             <FormControl>
-                                                <Input type="number" {...field} />
+                                                <Input type="number" placeholder="e.g. 200" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -382,7 +388,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>Max Heart Rate Achieved</FormLabel>
                                             <FormControl>
-                                                <Input type="number" {...field} />
+                                                <Input type="number" placeholder="e.g. 150" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -420,7 +426,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>ST Depression (Oldpeak)</FormLabel>
                                             <FormControl>
-                                                <Input type="number" step="0.1" {...field} />
+                                                <Input type="number" step="0.1" placeholder="e.g. 1.5" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
@@ -459,7 +465,7 @@ export function PredictionForm({ onSuccess }: { onSuccess?: () => void }) {
                                         <FormItem>
                                             <FormLabel>Major Vessels (0-3)</FormLabel>
                                             <FormControl>
-                                                <Input type="number" {...field} />
+                                                <Input type="number" placeholder="0-3" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
