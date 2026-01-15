@@ -568,7 +568,7 @@ I would like to schedule an appointment for a detailed checkup.
 
 Sincerely,
 (Your Name)`);
-                                                    window.open(`mailto:${doctor.email}?subject=${subject}&body=${body}`);
+                                                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${doctor.email}&su=${subject}&body=${body}`, '_blank');
                                                 }}
                                             >
                                                 Email Doctor
